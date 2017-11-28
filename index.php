@@ -1,8 +1,8 @@
 <?php
-$servername = "192.168.0.49";
-$username = "thiagoantonio";
-$password = "thi15ago87";
-$dbnome = "monitoramento_sistec";
+$servername = "";
+$username = "";
+$password = "";
+$dbnome = "";
 
 //$servername = "localhost";
 //$username = "root";
