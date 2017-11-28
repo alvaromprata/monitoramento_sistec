@@ -1,0 +1,108 @@
+-- Exemplo de insert Into no ScriptCase
+$sql = "INSERT INTO monitoramento_sistec.alunos_acad_sem_cpf(id,num_matricula,nome,cpf)
+        SELECT alunos_acad.id, alunos_acad.num_matricula, alunos_acad.nome, alunos_acad.cpf 
+        FROM alunos_acad WHERE cpf IS NULL || length(cpf) < 11 || cpf = ''";
+sc_exec_sql($sql);
+
+-- SITUA��O DIVERGENTE --
+
+INSERT INTO sit_divergente(cod_sistec,num_matricula,nome,cpf,sit_acad,sit_sistec)
+SELECT alunos_sistec.cod_sistec, alunos_acad.num_matricula, alunos_sistec.nome, alunos_sistec.cpf, alunos_acad.sit_periodo, alunos_sistec.sit_periodo
+FROM alunos_sistec
+INNER JOIN alunos_acad
+ON alunos_sistec.sit_periodo = 'em_curso' && alunos_acad.sit_periodo != 'matriculado' && alunos_acad.cpf = alunos_sistec.cpf
+ORDER BY alunos_sistec.nome;
+
+-- VARIOS CPFs --
+
+INSERT INTO varios_cpf(nome,cpf_acad,cpf_sistec)
+SELECT alunos_sistec.nome, alunos_acad.cpf, alunos_sistec.cpf
+FROM alunos_sistec, alunos_acad
+WHERE alunos_acad.cpf != alunos_sistec.cpf && alunos_acad.nome = alunos_sistec.nome;
+
+-- Aluno existe no Sistec e n�o existe no Qacad�mico --
+
+INSERT INTO nao_existe_acad(nome,cpf,cod_sistec)
+SELECT alunos_sistec.nome, alunos_sistec.cpf, alunos_sistec.cod_sistec
+FROM alunos_sistec
+WHERE NOT EXISTS (SELECT * FROM alunos_acad WHERE alunos_sistec.nome = alunos_acad.nome);
+
+-- Aluno existe no Qacad�mico e n�o existe no Sistec --
+
+INSERT INTO nao_existe_sistec(nome,cpf,num_matricula)
+SELECT alunos_acad.nome, alunos_acad.cpf, alunos_acad.num_matricula
+FROM alunos_acad
+WHERE NOT EXISTS (SELECT * FROM alunos_sistec WHERE alunos_acad.nome = alunos_sistec.nome)
+
+outra forma 
+
+select * from NOMEDOBANCO1.dbo.TABELA
+where not exists (select * from NOMEDOBANCO2.dbo.TABELA
+where NOMEDOBANCO1.dbo.TABELA.CAMPOTABELA = NOMEDOBANCO2.dbo.TABELA.CAMPOTABELA)
+
+-- Nomes diferentes com mesmo cpf --
+
+INSERT INTO nomes_diferentes_mesmo_cpf (nome_acad,nome_sistec,cpf)
+SELECT alunos_acad.nome, alunos_sistec.nome, alunos_sistec.cpf
+FROM alunos_acad, alunos_sistec
+WHERE alunos_acad.nome != alunos_sistec.nome && alunos_acad.cpf = alunos_sistec.cpf
+
+-- Contar Repetições de nomes --
+
+SELECT COUNT(*) AS Repetições,nome
+FROM nao_existe_sistec
+GROUP BY nome
+ORDER BY COUNT(*) DESC
+
+-- Tudo maiusculo --
+
+-- Remover Acentos --
+SET SQL_SAFE_UPDATES=0;
+UPDATE alunos_acad
+set
+nome = TRIM(UCASE(nome)),
+nome = REPLACE(nome ,'Á','A'), nome = REPLACE(nome ,'À','A'), nome = REPLACE(nome ,'Ã','A'), nome = REPLACE(nome ,'Â','A'), nome = REPLACE(nome ,'É','E'),  
+nome = REPLACE(nome ,'È','E'), nome = REPLACE(nome ,'Ê','E'), nome = REPLACE(nome ,'Í','I'), nome = REPLACE(nome ,'Ì','I'), nome = REPLACE(nome ,'Î','I'),  
+nome = REPLACE(nome ,'Ó','O'), nome = REPLACE(nome ,'Ò','O'), nome = REPLACE(nome ,'Ô','O'), nome = REPLACE(nome ,'Õ','O'), nome = REPLACE(nome ,'Ú','U'),  
+nome = REPLACE(nome ,'Ù','U'), nome = REPLACE(nome ,'Û','U'), nome = REPLACE(nome ,'Ü','U'), nome = REPLACE(nome ,'Ç','C');
+
+-- Nova inserção de dados academico --
+INSERT INTO 
+$tabela(cod_instituicao,cod_curso,curso,catricula,cpf,nome,situacao_matricula,sit_matricula_periodo,desc_sit_matricula_periodo,nascimento,cota,ano_letivo_ini,periodo_letivo_ini) 
+VALUES 
+$valores[0],$valores[1],$valores[2],$valores[3],$cpfCompleto,$maiusculo,$valores[6],$valores[7],$valores[8],$valores[9],$valores[10],$valores[11],$valores[12]
+
+-- Atualizar sit matricula sistec --
+SET SQL_SAFE_UPDATES=0;
+UPDATE sit_divergente
+set
+sit_sistec = TRIM(sit_sistec),
+sit_sistec = REPLACE(sit_sistec ,'2','em_curso')
+
+-- Inserir Cursos SISTEC --
+-- Técnicos
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','47', 'TÉCNICO EM QUÍMICA');
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','85', 'TÉCNICO EM EDIFICAÇÕES');
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','41', 'TÉCNICO EM MANUTENÇÃO AUTOMOTIVA');
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','92', 'TÉCNICO EM SANEAMENTO');
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','74', 'TÉCNICO EM INFORMÁTICA PARA INTERNET');
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','75', 'TÉCNICO EM MANUTENÇÃO E SUPORTE EM INFORMÁTICA');
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','40', 'TÉCNICO EM ELETROTÉCNICA');
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','27', 'TÉCNICO EM SEGURANÇA DO TRABALHO');
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','43', 'TÉCNICO EM MECÂNICA');
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','68', 'TÉCNICO EM EVENTOS');
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','29', 'TÉCNICO EM ALIMENTAÇÃO ESCOLAR');
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','31', 'TÉCNICO EM INFRAESTRUTURA ESCOLAR');
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','48', 'TÉCNICO EM REFRIGERAÇÃO E CLIMATIZAÇÃO');
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','1121', 'TÉCNICO EM SISTEMAS DE ENERGIA RENOVAVEL');
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','80', 'TÉCNICO EM TELECOMUNICAÇÕES');
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','39', 'TÉCNICO EM ELETRÔNICA');
+-- Superiores
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','53007', 'GEOGRAFIA');
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','53036', 'GESTÃO AMBIENTAL');
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','53033', 'RADIOLOGIA');
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','52840', 'GESTÃO DE TURISMO');
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','63983', 'ENGENHARIA CIVIL');
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','52958', 'ENGENHARIA MECÂNICA');
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','52878', 'DESIGN GRÁFICO');
+INSERT INTO curso_sistec (id_unidade_ifpe,cod_curso_sistec, nome_curso_sistec) VALUES ('1','52843', 'ANÁLISE E DESENVOLVIMENTO DE SISTEMAS');

@@ -1,0 +1,70 @@
+CREATE TABLE `monitoramento_sistec`.`mapeamento_cursos_sistec` (
+  `id` INT NOT NULL,
+  `cod_sistec` VARCHAR(45) NOT NULL,
+  `nome_curso_sistec` VARCHAR(45) NOT NULL,
+  `tipo_curso_sistec` VARCHAR(45) NULL,
+  `tipo_oferta_sistec` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`));
+		
+		
+		CREATE TABLE `monitoramento_sistec`.`nome_diferentes_mesmo_cpf` (
+		  `nome_acad` VARCHAR(250) NOT NULL,
+		  `nome_sistec` VARCHAR(250) NOT NULL,
+		  `cpf` VARCHAR(11) NOT NULL);
+
+		
+		CREATE TABLE `monitoramento_sistec`.`nao_existe_acad` (
+          `nome` VARCHAR(250) NOT NULL,
+          `cpf` VARCHAR(11) NOT NULL,
+          `cod_sistec` VARCHAR(45) NOT NULL);
+
+          CREATE TABLE `monitoramento_sistec`.`nao_existe_sistec` (
+          `nome` VARCHAR(250) NOT NULL,
+          `cpf` VARCHAR(45) NOT NULL,
+          `num_matricula` VARCHAR(45) NOT NULL,
+          PRIMARY KEY (`cpf`));
+
+          CREATE TABLE `monitoramento_sistec`.`varios_cpf` (
+          `nome` VARCHAR(250) NOT NULL,
+          `cpf_acad` VARCHAR(11) NULL,
+          `cpf_sistec` VARCHAR(11) NULL,
+          PRIMARY KEY (`nome`));
+
+          CREATE TABLE `monitoramento_sistec`.`alunos_acad` (
+          `id` INT NOT NULL AUTO_INCREMENT,
+          `num_matricula` VARCHAR(45) NOT NULL,
+          `nome` VARCHAR(250) NOT NULL,
+          `cpf` VARCHAR(11) NOT NULL,
+          `sit_periodo` VARCHAR(20) NULL,
+          PRIMARY KEY (`id`));
+
+          CREATE TABLE `monitoramento_sistec`.`alunos_sistec` (
+          `id` INT NOT NULL AUTO_INCREMENT,
+          `cod_sistec` VARCHAR(45) NOT NULL,
+          `nome` VARCHAR(250) NOT NULL,
+          `cpf` VARCHAR(11) NOT NULL,
+          `sit_periodo` VARCHAR(20) NULL,
+          PRIMARY KEY (`id`));
+
+          CREATE TABLE `monitoramento_sistec`.`alunos_acad_sem_cpf` (
+          `id` INT NOT NULL,
+          `num_matricula` VARCHAR(45) NOT NULL,
+          `nome` VARCHAR(250) NOT NULL,
+          `cpf` VARCHAR(11),
+          PRIMARY KEY (`id`));
+
+          CREATE TABLE `monitoramento_sistec`.`alunos_sistec_sem_cpf` (
+          `id` INT NOT NULL,
+          `cod_sistec` VARCHAR(45) NOT NULL,
+          `nome` VARCHAR(250) NOT NULL,
+          `cpf` VARCHAR(11),
+          PRIMARY KEY (`id`));
+
+          CREATE TABLE `monitoramento_sistec`.`sit_divergente` (
+          `cod_sistec` VARCHAR(45) NOT NULL,
+          `num_matricula` VARCHAR(45) NOT NULL,
+          `nome` VARCHAR(250) NOT NULL,
+          `cpf` VARCHAR(11) NOT NULL,
+          `sit_acad` VARCHAR(45) NOT NULL,
+          `sit_sistec` VARCHAR(45) NOT NULL,
+          PRIMARY KEY (`cpf`));
